@@ -7,16 +7,28 @@ const CustomNode = ({ data, isConnectable }) => {
     }
   };
 
+  const getNodeClass = () => {
+    if (data.dbType) {
+      return `custom-node database ${data.dbType}`;
+    }
+    return `custom-node ${data.nodeType}`;
+  };
+
+  const showDetails = data.apiDetails || data.dbDetails;
+
   return (
-    <div className={`custom-node ${data.nodeType}`} onClick={handleClick}>
+    <div className={getNodeClass()} onClick={handleClick}>
       <Handle
         type="target"
         position={Position.Top}
         isConnectable={isConnectable}
       />
-      <div>
-        <div>{data.icon}</div>
-        <div>{data.label}</div>
+      <div className="node-content">
+        <div className="node-icon">{data.icon}</div>
+        <div className="node-label">{data.label}</div>
+        {showDetails && (
+          <div className="node-status">✓</div>
+        )}
       </div>
       <Handle
         type="source"

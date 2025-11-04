@@ -60,6 +60,17 @@ body {
 .flow-container {
   flex: 1;
   position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.flow-header {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+  display: flex;
+  gap: 10px;
 }
 
 /* Custom Node Styles */
@@ -73,11 +84,36 @@ body {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
+  position: relative;
 }
 
 .custom-node:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   transform: translateY(-2px);
+}
+
+.node-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.node-icon {
+  font-size: 24px;
+}
+
+.node-label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.node-status {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  font-size: 12px;
+  color: #28a745;
 }
 
 .custom-node.begin {
@@ -100,6 +136,42 @@ body {
   color: #6f42c1;
 }
 
+/* Database-specific colors */
+.custom-node.mongodb {
+  border-color: #47a248;
+  color: #47a248;
+}
+
+.custom-node.postgresql {
+  border-color: #336791;
+  color: #336791;
+}
+
+.custom-node.mysql {
+  border-color: #00758f;
+  color: #00758f;
+}
+
+.custom-node.redis {
+  border-color: #dc382d;
+  color: #dc382d;
+}
+
+.custom-node.neo4j {
+  border-color: #008cc1;
+  color: #008cc1;
+}
+
+.custom-node.snowflake {
+  border-color: #29b5e8;
+  color: #29b5e8;
+}
+
+.custom-node.graphql {
+  border-color: #e10098;
+  color: #e10098;
+}
+
 /* Modal Styles */
 .modal-overlay {
   position: fixed;
@@ -119,7 +191,9 @@ body {
   border-radius: 12px;
   padding: 30px;
   width: 90%;
-  max-width: 500px;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
 }
 
@@ -218,6 +292,15 @@ body {
 
 .btn-secondary:hover {
   background: #5c636a;
+}
+
+.btn-success {
+  background: #28a745;
+  color: white;
+}
+
+.btn-success:hover {
+  background: #218838;
 }
 
 .react-flow__node {
