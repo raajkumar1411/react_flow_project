@@ -80,6 +80,16 @@ Each database type has its own color and icon:
 - Snowflake ❄️ (Sky Blue)
 - GraphQL ◈ (Pink)
 
+## Node Types (Continued)
+
+### Custom Nodes
+Create your own node types with:
+- Custom name and icon
+- Personalized color
+- Dynamic form fields
+- 12 field types (text, number, dropdown, radio, checkbox, etc.)
+- See [CUSTOM_NODES_GUIDE.md](./CUSTOM_NODES_GUIDE.md) for complete documentation
+
 ## Features
 
 ### 1. Drag and Drop
@@ -90,6 +100,7 @@ Each database type has its own color and icon:
 ### 2. Node Configuration
 - Click on API nodes to configure endpoints
 - Click on database nodes to set connection details
+- **NEW**: Add dynamic custom fields to any API or Database node
 - Visual indicator (✓) shows configured nodes
 
 ### 3. Visual Connections
@@ -97,7 +108,25 @@ Each database type has its own color and icon:
 - Create complex workflow sequences
 - Visual flow representation
 
-### 4. JSON Export
+### 3.5 Node Management
+- **Delete nodes**: Hover over any node to see the delete button (✕)
+- **Keyboard shortcut**: Select a node and press Delete or Backspace
+- Delete button appears on hover for all node types
+
+### 4. Dynamic Custom Fields (NEW!)
+- Add custom key-value pairs to API and Database nodes
+- Perfect for timeouts, retry settings, SSL options, etc.
+- Quick and flexible without creating custom nodes
+- See [DYNAMIC_FIELDS_GUIDE.md](./DYNAMIC_FIELDS_GUIDE.md) for details
+
+### 5. Custom Node Builder
+- Click "+ Create Custom Node" in sidebar
+- Design your own node types
+- Add custom form fields with 12+ field types
+- Choose icons and colors
+- Build nodes for any integration or service
+
+### 6. JSON Export
 - Click "💾 Save Flow as JSON" button
 - Exports complete flow including:
   - All nodes with positions
@@ -106,7 +135,7 @@ Each database type has its own color and icon:
   - Database connection details
   - Metadata (timestamp, version)
 
-### 5. Flow Controls
+### 7. Flow Controls
 - Zoom in/out
 - Pan the canvas
 - Fit view to see entire flow

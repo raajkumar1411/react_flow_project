@@ -7,12 +7,26 @@ const ApiModal = ({ isOpen, onClose, onSave, initialData }) => {
     method: 'GET',
     headers: '',
     body: '',
-    description: ''
+    description: '',
+    customFields: []
   });
 
   useEffect(() => {
     if (initialData && initialData.apiDetails) {
-      setFormData(initialData.apiDetails);
+      setFormData({
+        ...initialData.apiDetails,
+        customFields: initialData.apiDetails.customFields || []
+      });
+    } else {
+      setFormData({
+        name: '',
+        url: '',
+        method: 'GET',
+        headers: '',
+        body: '',
+        description: '',
+        customFields: []
+      });
     }
   }, [initialData]);
 
@@ -21,6 +35,29 @@ const ApiModal = ({ isOpen, onClose, onSave, initialData }) => {
     setFormData(prev => ({
       ...prev,
       [name]: value
+    }));
+  };
+
+  const addCustomField = () => {
+    setFormData(prev => ({
+      ...prev,
+      customFields: [...prev.customFields, { id: Date.now(), key: '', value: '' }]
+    }));
+  };
+
+  const removeCustomField = (id) => {
+    setFormData(prev => ({
+      ...prev,
+      customFields: prev.customFields.filter(field => field.id !== id)
+    }));
+  };
+
+  const updateCustomField = (id, property, value) => {
+    setFormData(prev => ({
+      ...prev,
+      customFields: prev.customFields.map(field =>
+        field.id === id ? { ...field, [property]: value } : field
+      )
     }));
   };
 
@@ -113,6 +150,54 @@ const ApiModal = ({ isOpen, onClose, onSave, initialData }) => {
               onChange={handleChange}
               placeholder="Brief description of what this API does"
             />
+          </div>
+
+          {/* Custom Fields Section */}
+          <div className="custom-fields-section">
+            <div className="section-header">
+              <label>Custom Fields</label>
+              <button type="button" className="btn btn-small btn-primary" onClick={addCustomField}>
+                + Add Field
+              </button>
+            </div>
+
+            {formData.customFields.length > 0 && (
+              <div className="custom-fields-list">
+                {formData.customFields.map((field, index) => (
+                  <div key={field.id} className="custom-field-item">
+                    <span className="field-index">{index + 1}.</span>
+                    <input
+                      type="text"
+                      value={field.key}
+                      onChange={(e) => updateCustomField(field.id, 'key', e.target.value)}
+                      placeholder="Field name (e.g., timeout, retry)"
+                      className="field-key-input"
+                    />
+                    <input
+                      type="text"
+                      value={field.value}
+                      onChange={(e) => updateCustomField(field.id, 'value', e.target.value)}
+                      placeholder="Value"
+                      className="field-value-input"
+                    />
+                    <button
+                      type="button"
+                      className="btn-icon btn-danger"
+                      onClick={() => removeCustomField(field.id)}
+                      title="Remove field"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {formData.customFields.length === 0 && (
+              <div className="empty-state-small">
+                No custom fields added. Click "+ Add Field" to create custom key-value pairs.
+              </div>
+            )}
           </div>
 
           <div className="modal-actions">

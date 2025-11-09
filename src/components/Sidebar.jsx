@@ -1,4 +1,4 @@
-const Sidebar = () => {
+const Sidebar = ({ customNodes = [], onCreateCustomNode }) => {
   const nodeTypes = [
     { type: 'begin', label: 'Begin', icon: '▶️' },
     { type: 'end', label: 'End', icon: '⏹️' },
@@ -33,6 +33,36 @@ const Sidebar = () => {
           </div>
         ))}
       </div>
+
+      {customNodes.length > 0 && (
+        <>
+          <h3 className="section-title">Custom Nodes</h3>
+          <div>
+            {customNodes.map((node) => (
+              <div
+                key={node.id}
+                className="node-item custom-node-item"
+                draggable
+                onDragStart={(e) => onDragStart(e, {
+                  type: 'custom-type',
+                  label: node.name,
+                  icon: node.icon,
+                  customNodeId: node.id,
+                  color: node.color
+                })}
+                style={{ borderLeft: `4px solid ${node.color}` }}
+              >
+                <span className="node-icon">{node.icon}</span>
+                <span>{node.name}</span>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
+      <button className="btn btn-primary btn-create-custom" onClick={onCreateCustomNode}>
+        + Create Custom Node
+      </button>
     </div>
   );
 };

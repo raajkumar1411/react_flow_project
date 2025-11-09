@@ -14,6 +14,8 @@ import CustomNode from './components/CustomNode';
 import Sidebar from './components/Sidebar';
 import ApiModal from './components/ApiModal';
 import DatabaseModal from './components/DatabaseModal';
+import CustomNodeBuilder from './components/CustomNodeBuilder';
+import CustomNodeFormModal from './components/CustomNodeFormModal';
 import './App.css';
 
 const nodeTypes = {
@@ -30,7 +32,10 @@ function App() {
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDbModalOpen, setIsDbModalOpen] = useState(false);
+  const [isCustomBuilderOpen, setIsCustomBuilderOpen] = useState(false);
+  const [isCustomFormOpen, setIsCustomFormOpen] = useState(false);
   const [selectedNode, setSelectedNode] = useState(null);
+  const [customNodeDefinitions, setCustomNodeDefinitions] = useState([]);
 
   const onConnect = useCallback(
     (params) => setEdges((eds) => addEdge(params, eds)),
@@ -43,13 +48,18 @@ function App() {
   }, []);
 
   const handleNodeClick = useCallback((nodeData) => {
+    console.log('Node clicked:', nodeData);
     const node = nodes.find(n => n.id === nodeData.id);
+    console.log('Found node:', node);
     setSelectedNode(node);
 
     if (nodeData.nodeType === 'api') {
       setIsModalOpen(true);
     } else if (nodeData.dbType) {
       setIsDbModalOpen(true);
+    } else if (nodeData.customNodeId) {
+      console.log('Opening custom form for customNodeId:', nodeData.customNodeId);
+      setIsCustomFormOpen(true);
     }
   }, [nodes]);
 
@@ -68,8 +78,9 @@ function App() {
         y: event.clientY,
       });
 
+      const nodeId = getId();
       const newNode = {
-        id: getId(),
+        id: nodeId,
         type: 'custom',
         position,
         data: {
@@ -77,10 +88,13 @@ function App() {
           nodeType: data.type || data.nodeType,
           icon: data.icon,
           dbType: data.dbType,
-          id: getId(),
+          customNodeId: data.customNodeId,
+          color: data.color,
+          id: nodeId,
           onNodeClick: handleNodeClick,
           apiDetails: null,
           dbDetails: null,
+          customData: null,
         },
       };
 
@@ -139,6 +153,46 @@ function App() {
     setSelectedNode(null);
   }, []);
 
+  const handleCreateCustomNode = useCallback(() => {
+    setIsCustomBuilderOpen(true);
+  }, []);
+
+  const handleSaveCustomNodeDefinition = useCallback((definition) => {
+    const newDefinition = {
+      ...definition,
+      id: `custom_${Date.now()}`
+    };
+    setCustomNodeDefinitions(prev => [...prev, newDefinition]);
+  }, []);
+
+  const handleSaveCustomData = useCallback((customData) => {
+    if (selectedNode) {
+      setNodes((nds) =>
+        nds.map((node) =>
+          node.id === selectedNode.id
+            ? {
+                ...node,
+                data: {
+                  ...node.data,
+                  customData: customData,
+                },
+              }
+            : node
+        )
+      );
+    }
+    setSelectedNode(null);
+  }, [selectedNode, setNodes]);
+
+  const handleCloseCustomBuilder = useCallback(() => {
+    setIsCustomBuilderOpen(false);
+  }, []);
+
+  const handleCloseCustomForm = useCallback(() => {
+    setIsCustomFormOpen(false);
+    setSelectedNode(null);
+  }, []);
+
   const handleSaveFlow = useCallback(() => {
     const flowData = {
       nodes: nodes.map(node => ({
@@ -173,9 +227,20 @@ function App() {
     URL.revokeObjectURL(url);
   }, [nodes, edges]);
 
+  const getCustomNodeDefinition = (customNodeId) => {
+    console.log('Looking for customNodeId:', customNodeId);
+    console.log('Available definitions:', customNodeDefinitions);
+    const def = customNodeDefinitions.find(def => def.id === customNodeId);
+    console.log('Found definition:', def);
+    return def;
+  };
+
   return (
     <div className="app-container">
-      <Sidebar />
+      <Sidebar
+        customNodes={customNodeDefinitions}
+        onCreateCustomNode={handleCreateCustomNode}
+      />
       <div className="flow-container" ref={reactFlowWrapper}>
         <div className="flow-header">
           <button className="btn btn-success" onClick={handleSaveFlow}>
@@ -212,6 +277,18 @@ function App() {
         onClose={handleCloseDbModal}
         onSave={handleSaveDbDetails}
         initialData={selectedNode?.data}
+      />
+      <CustomNodeBuilder
+        isOpen={isCustomBuilderOpen}
+        onClose={handleCloseCustomBuilder}
+        onSave={handleSaveCustomNodeDefinition}
+      />
+      <CustomNodeFormModal
+        isOpen={isCustomFormOpen}
+        onClose={handleCloseCustomForm}
+        onSave={handleSaveCustomData}
+        initialData={selectedNode?.data}
+        nodeDefinition={getCustomNodeDefinition(selectedNode?.data?.customNodeId)}
       />
     </div>
   );
