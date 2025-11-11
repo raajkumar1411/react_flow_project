@@ -44,14 +44,23 @@ const DatabaseModal = ({ isOpen, onClose, onSave, initialData }) => {
   });
 
   useEffect(() => {
+    if (isOpen) {
+      console.log('=== DATABASE MODAL OPENED ===');
+      console.log('Initial data received:', initialData);
+      console.log('Database type:', dbType);
+    }
+
     if (initialData?.dbDetails) {
-      setFormData({
-        ...formData,
+      console.log('Loading existing DB details:', initialData.dbDetails);
+      setFormData(prev => ({
+        ...prev,
         ...initialData.dbDetails,
         customFields: initialData.dbDetails.customFields || []
-      });
+      }));
+    } else if (isOpen) {
+      console.log('No existing DB details - starting with empty form');
     }
-  }, [initialData]);
+  }, [initialData, isOpen, dbType]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -83,6 +92,9 @@ const DatabaseModal = ({ isOpen, onClose, onSave, initialData }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log('=== DATABASE MODAL SUBMITTING ===');
+    console.log('Database type:', dbType);
+    console.log('Form data being saved:', formData);
     onSave(formData);
     onClose();
   };

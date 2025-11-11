@@ -12,12 +12,19 @@ const ApiModal = ({ isOpen, onClose, onSave, initialData }) => {
   });
 
   useEffect(() => {
+    if (isOpen) {
+      console.log('=== API MODAL OPENED ===');
+      console.log('Initial data received:', initialData);
+    }
+
     if (initialData && initialData.apiDetails) {
+      console.log('Loading existing API details:', initialData.apiDetails);
       setFormData({
         ...initialData.apiDetails,
         customFields: initialData.apiDetails.customFields || []
       });
     } else {
+      console.log('No existing API details - starting with empty form');
       setFormData({
         name: '',
         url: '',
@@ -28,7 +35,7 @@ const ApiModal = ({ isOpen, onClose, onSave, initialData }) => {
         customFields: []
       });
     }
-  }, [initialData]);
+  }, [initialData, isOpen]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -63,11 +70,15 @@ const ApiModal = ({ isOpen, onClose, onSave, initialData }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log('=== API MODAL SUBMITTING ===');
+    console.log('Form data being saved:', formData);
     onSave(formData);
     onClose();
   };
 
-  if (!isOpen) return null;
+  if (!isOpen) {
+    return null;
+  }
 
   return (
     <div className="modal-overlay" onClick={onClose}>

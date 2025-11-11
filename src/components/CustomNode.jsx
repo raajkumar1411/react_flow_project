@@ -4,8 +4,16 @@ const CustomNode = ({ data, isConnectable, id }) => {
   const { deleteElements } = useReactFlow();
 
   const handleClick = () => {
+    console.log('=== NODE CLICKED ===');
+    console.log('Node ID:', id);
+    console.log('Node data:', data);
+    console.log('Has onNodeClick?', !!data.onNodeClick);
+
     if (data.onNodeClick) {
-      data.onNodeClick(data);
+      // Pass both id and data to ensure we have the node ID
+      data.onNodeClick({ ...data, id });
+    } else {
+      console.error('❌ No onNodeClick handler found!');
     }
   };
 
